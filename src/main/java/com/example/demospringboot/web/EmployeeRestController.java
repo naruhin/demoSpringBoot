@@ -45,6 +45,7 @@ public class EmployeeRestController {
                 .orElseThrow(() -> new EntityNotFoundException("Entity with id = Not found"));
     }
 
+
     //Обновление юзера
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -52,9 +53,13 @@ public class EmployeeRestController {
 
         return repository.findById(id)
                 .map(entity -> {
-                    entity.setName(employee.getName());
+                    entity.setFirstName(employee.getFirstName());
+                    entity.setSecondName(employee.getSecondName());
+                    entity.setBirthdate(employee.getBirthdate());
+                    entity.setSpeciality(employee.getSpeciality());
                     entity.setEmail(employee.getEmail());
                     entity.setCountry(employee.getCountry());
+                    entity.setPhoneNumber(employee.getPhoneNumber());
                     return repository.save(entity);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Employee with id = Not found"));
