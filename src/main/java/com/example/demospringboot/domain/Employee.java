@@ -16,6 +16,9 @@ public class Employee {
 
     private String country;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = Boolean.FALSE;
+
     public Long getId() {
         return id;
     }
@@ -46,5 +49,13 @@ public class Employee {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

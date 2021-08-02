@@ -7,12 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmployeeRestController {
-
 
     private final EmployeeRepository repository;
 
@@ -23,7 +22,7 @@ public class EmployeeRestController {
     //Операция сохранения юзера в базу данных
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee saveBook(@RequestBody Employee employee) {
+    public Employee saveEmployee(@RequestBody Employee employee) {
 
         return repository.save(employee);
     }
@@ -31,7 +30,7 @@ public class EmployeeRestController {
     //Получение списка юзеров
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    public Collection<Employee> getAllBooks() {
+    public List<Employee> getAllUsers() {
 
         return repository.findAll();
     }
@@ -39,10 +38,16 @@ public class EmployeeRestController {
     //Получения юзера по id
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee getBookById(@PathVariable long id) {
+    public Employee getEmployeeById(@PathVariable long id) {
 
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Entity with id = Not found"));
+        Employee employee = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
+
+        if (employee.getIsDeleted()) {
+            throw new EntityNotFoundException("Employee was deleted with id = " + id);
+        }
+
+        return employee;
     }
 
     //Обновление юзера
@@ -57,20 +62,24 @@ public class EmployeeRestController {
                     entity.setCountry(employee.getCountry());
                     return repository.save(entity);
                 })
-                .orElseThrow(() -> new EntityNotFoundException("Employee with id = Not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
     }
 
     //Удаление по id
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeBookById(@PathVariable long id) {
-        repository.deleteById(id);
+    public void removeEmployeeById(@PathVariable long id) {
+        //repository.deleteById(id);
+        Employee employee = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
+        employee.setIsDeleted(true);
+        repository.save(employee);
     }
 
     //Удаление всех юзеров
     @DeleteMapping("/users")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeAllBooks() {
+    public void removeAllUsers() {
         repository.deleteAll();
     }
 }
