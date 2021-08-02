@@ -10,21 +10,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    private String firstName;
-
-    private String secondName;
-
-    private String birthdate;
-
-    private String speciality;
-
-    private String phoneNumber;
+    private String name;
 
     private String email;
 
     private String country;
-
-
 
     public Long getId() {
         return id;
@@ -34,12 +24,12 @@ public class Employee {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String name) {
-        this.firstName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -56,37 +46,5 @@ public class Employee {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getBirthdate() {
-        return birthdate;
-    }
-
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
-    }
-
-    public String getSpeciality() {
-        return speciality;
-    }
-
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 }
