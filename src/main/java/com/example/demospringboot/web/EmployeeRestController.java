@@ -70,11 +70,12 @@ public class EmployeeRestController {
     @PatchMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeEmployeeById(@PathVariable long id) {
-        //repository.deleteById(id);
-        Employee employee = repository.findById(id)
+        repository.findById(id)
+                .map(employee -> {
+                    employee.setIsDeleted(Boolean.TRUE);
+                    return repository.save(employee);
+                })
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
-        employee.setIsDeleted(Boolean.TRUE);
-        repository.save(employee);
     }
 
     //Удаление всех юзеров
