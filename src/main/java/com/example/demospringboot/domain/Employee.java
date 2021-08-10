@@ -1,5 +1,7 @@
 package com.example.demospringboot.domain;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,7 +16,22 @@ public class Employee {
 
     private String email;
 
-    private String country;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = Boolean.FALSE;
+
+    @NotNull
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public Long getId() {
         return id;
@@ -40,11 +57,11 @@ public class Employee {
         this.email = email;
     }
 
-    public String getCountry() {
-        return country;
+    public Boolean getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setIsDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
