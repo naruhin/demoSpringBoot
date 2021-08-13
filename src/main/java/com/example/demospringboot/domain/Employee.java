@@ -1,11 +1,15 @@
 package com.example.demospringboot.domain;
 
-import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
+@Getter @Setter
+@NoArgsConstructor
 public class Employee {
 
     @Id
@@ -20,48 +24,13 @@ public class Employee {
     @Column(name = "is_deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
-    @NotNull
-    @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "address_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "address_fk", nullable = false)
     private Address address;
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Employee(String name, String email, Address address) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Boolean deleted) {
-        isDeleted = deleted;
+        this.address = address;
     }
 }

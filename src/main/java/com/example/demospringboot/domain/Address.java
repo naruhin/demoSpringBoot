@@ -1,9 +1,16 @@
 package com.example.demospringboot.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "addresses")
+@Getter @Setter
+@NoArgsConstructor
 public class Address {
 
     @Id
@@ -16,35 +23,13 @@ public class Address {
 
     private String zipCode;
 
-    public long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private Set<Employee> employees;
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
+    public Address(String country, String city, String zipCode) {
         this.country = country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
         this.city = city;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 }
