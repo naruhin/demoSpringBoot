@@ -1,7 +1,8 @@
 package com.example.demospringboot.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users")
 @Getter @Setter
-@NoArgsConstructor
 public class Employee {
 
     @Id
@@ -20,17 +20,13 @@ public class Employee {
 
     private String email;
 
-
+    @JsonIgnore
     @Column(name = "is_deleted")
     private Boolean isDeleted = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "address_fk", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "address_fk")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Address address;
 
-    public Employee(String name, String email, Address address) {
-        this.name = name;
-        this.email = email;
-        this.address = address;
-    }
 }

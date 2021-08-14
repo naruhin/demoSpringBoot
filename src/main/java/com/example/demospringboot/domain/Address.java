@@ -1,7 +1,7 @@
 package com.example.demospringboot.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,7 +10,6 @@ import java.util.Set;
 @Entity
 @Table(name = "addresses")
 @Getter @Setter
-@NoArgsConstructor
 public class Address {
 
     @Id
@@ -23,13 +22,12 @@ public class Address {
 
     private String zipCode;
 
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY,
+    @JsonIgnore
+    @Column(name = "is_deleted")
+    private boolean deleted = Boolean.FALSE;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     private Set<Employee> employees;
 
-    public Address(String country, String city, String zipCode) {
-        this.country = country;
-        this.city = city;
-        this.zipCode = zipCode;
-    }
 }
