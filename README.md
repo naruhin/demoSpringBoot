@@ -33,3 +33,7 @@ Request collection for Postman
 ### Requests
 
 ![Request collection in Postman](screenshots/requests.png "Request collection in Postman")
+
+ #### Example of GET requests to get all addresses
+
+![GET Request](screenshots/get.png "GET Request")
