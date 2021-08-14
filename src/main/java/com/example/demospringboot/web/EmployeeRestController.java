@@ -1,7 +1,9 @@
 package com.example.demospringboot.web;
 
+import com.example.demospringboot.domain.Address;
 import com.example.demospringboot.domain.Employee;
-import com.example.demospringboot.domain.EmployeeRepository;
+import com.example.demospringboot.repository.AddressRepository;
+import com.example.demospringboot.repository.EmployeeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,74 +15,104 @@ import java.util.List;
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EmployeeRestController {
 
-    private final EmployeeRepository repository;
+    private final AddressRepository addressRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public EmployeeRestController(EmployeeRepository repository) {
-        this.repository = repository;
+    public EmployeeRestController(AddressRepository addressRepository, EmployeeRepository employeeRepository) {
+        this.addressRepository = addressRepository;
+        this.employeeRepository = employeeRepository;
     }
 
-    //Операция сохранения юзера в базу данных
+    //Сохранения юзера без указания адреса
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public Employee saveEmployee(@RequestBody Employee employee) {
-        return repository.save(employee);
+    public Employee saveEmployee(@RequestBody Employee employee){
+        return employeeRepository.save(employee);
     }
 
-    //Получение списка юзеров
+    //Сохранение юзера согласно указанному адресу
+    @PostMapping("/users/{addressId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Employee saveEmployeeByAddressId(@RequestBody Employee employee, @PathVariable long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Address not found with id = " + addressId));
+
+        employee.setAddress(address);
+
+        return employeeRepository.save(employee);
+    }
+
+    //Получение всех юзеров
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    public List<Employee> getAllUsers() {
-
-        return repository.findAll();
+    public List<Employee> getAllEmployees(){
+        return employeeRepository.findAllByIsDeletedIsFalse();
     }
 
-    //Получения юзера по id
+    //Получение юзера по id
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee getEmployeeById(@PathVariable long id) {
-
-        Employee employee = repository.findById(id)
+    public Employee getEmployeeById(@PathVariable Long id) {
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
 
         if (employee.getIsDeleted()) {
             throw new EntityNotFoundException("Employee was deleted with id = " + id);
         }
-
         return employee;
     }
 
 
-    //Обновление юзера
+    //Обновление информации о юзере
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Employee refreshEmployee(@PathVariable("id") long id, @RequestBody Employee employee) {
+    public Employee updateEmployee(@PathVariable("id") long id, @RequestBody Employee employee) {
 
-        return repository.findById(id)
+        return employeeRepository.findById(id)
                 .map(entity -> {
+                    entity.setName(employee.getName());
                     entity.setEmail(employee.getEmail());
-                    entity.setAddress(employee.getAddress());
-                    return repository.save(entity);
+                    return employeeRepository.save(entity);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
     }
 
-    //Удаление по id
-    //@DeleteMapping("/users/{id}")
+
+    //Изменение адреса в юзере по id
+    @PatchMapping("/addresses/{addressId}/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Employee updateEmployee(@PathVariable("addressId") long addressId,
+                                   @PathVariable("userId") long userId) {
+
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new EntityNotFoundException("Address not found with id = " + addressId));
+
+        Employee employee = employeeRepository.findById(userId)
+                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + addressId));
+
+        employee.setAddress(address);
+
+        return employeeRepository.save(employee);
+    }
+
+
+    //Удаление юзера из таблицы (смена поля is_deleted c false на true)
     @PatchMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeEmployeeById(@PathVariable long id) {
-        repository.findById(id)
+        employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setIsDeleted(Boolean.TRUE);
-                    return repository.save(employee);
+                    return employeeRepository.save(employee);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id = " + id));
     }
 
-    //Удаление всех юзеров
+    //Полное удаление всех записей
     @DeleteMapping("/users")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeAllUsers() {
-        repository.deleteAll();
+        employeeRepository.deleteAll();
     }
+
 }

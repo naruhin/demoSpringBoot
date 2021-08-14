@@ -1,9 +1,15 @@
 package com.example.demospringboot.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "addresses")
+@Getter @Setter
 public class Address {
 
     @Id
@@ -16,35 +22,12 @@ public class Address {
 
     private String zipCode;
 
-    public long getId() {
-        return id;
-    }
+    @JsonIgnore
+    @Column(name = "is_deleted")
+    private boolean deleted = Boolean.FALSE;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "address", fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL)
+    private Set<Employee> employees;
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
 }
