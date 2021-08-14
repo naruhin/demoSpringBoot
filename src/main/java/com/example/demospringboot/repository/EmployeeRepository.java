@@ -8,9 +8,5 @@ import java.util.List;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    List <Employee> findAllByIsDeletedIsFalse();
-
-    List <Employee> getAllByIsDeletedIsFalse();
-
-    Employee findByIdAndIsDeletedIsFalse(Long id);
+    List<Employee> findAllByIsDeletedIsFalse();
 }
